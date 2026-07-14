@@ -1,0 +1,54 @@
+name: Update Dalo formula
+
+on:
+  repository_dispatch:
+    types: [dalo_release]
+  workflow_dispatch:
+    inputs:
+      tag_name:
+        description: Dalo release tag (for example, dalo-v0.7.2)
+        required: true
+        type: string
+
+permissions:
+  contents: write
+
+concurrency:
+  group: update-dalo-formula
+  cancel-in-progress: false
+
+jobs:
+  update:
+    name: Update and verify formula
+    runs-on: macos-14
+    timeout-minutes: 15
+    env:
+      TAG_NAME: ${{ github.event.client_payload.tag_name || inputs.tag_name }}
+    steps:
+      - uses: actions/checkout@v7
+      - name: Update formula
+        run: ruby .github/scripts/update_dalo_formula.rb "$TAG_NAME"
+      - name: Commit update locally
+        run: |
+          if git diff --quiet -- Formula/dalo.rb; then
+            echo "Formula is already current."
+            exit 0
+          fi
+
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add Formula/dalo.rb
+          git commit -m "Update Dalo to ${TAG_NAME#dalo-v}"
+      - name: Register tap
+        run: brew tap --custom-remote sebastian-software/tap "file://$GITHUB_WORKSPACE"
+      - name: Validate formula
+        run: |
+          brew style Formula/dalo.rb
+          brew audit --strict --online sebastian-software/tap/dalo
+      - name: Install and test Dalo
+        run: |
+          brew install sebastian-software/tap/dalo
+          brew test sebastian-software/tap/dalo
+          dalo --version
+      - name: Push update
+        run: git push

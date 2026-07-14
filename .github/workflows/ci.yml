@@ -1,0 +1,28 @@
+name: CI
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    name: Test formula
+    runs-on: macos-14
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v7
+      - name: Register tap
+        run: brew tap --custom-remote sebastian-software/tap "file://$GITHUB_WORKSPACE"
+      - name: Validate formula
+        run: |
+          brew style Formula/dalo.rb
+          brew audit --strict --online sebastian-software/tap/dalo
+      - name: Install and test Dalo
+        run: |
+          brew install sebastian-software/tap/dalo
+          brew test sebastian-software/tap/dalo
+          dalo --version
