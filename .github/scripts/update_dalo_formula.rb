@@ -4,7 +4,7 @@
 require "net/http"
 require "uri"
 
-TAG_PATTERN = /\Adalo-v(\d+\.\d+\.\d+(?:-[0-9A-Za-z.-]+)?)\z/
+TAG_PATTERN = /\A(?:dalo-)?v(\d+\.\d+\.\d+(?:-[0-9A-Za-z.-]+)?)\z/
 ARCHITECTURES = {
   arm: "aarch64-apple-darwin",
   intel: "x86_64-apple-darwin",
@@ -29,7 +29,7 @@ def fetch(uri, redirects_left = 5)
 end
 
 tag = ARGV.fetch(0) do
-  warn "Usage: update_dalo_formula.rb dalo-v<version>"
+  warn "Usage: update_dalo_formula.rb [dalo-]v<version>"
   exit 1
 end
 
