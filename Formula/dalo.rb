@@ -5,11 +5,11 @@ class Dalo < Formula
 
   on_macos do
     if Hardware::CPU.arm?
-      url "https://github.com/sebastian-software/dalo/releases/download/dalo-v0.15.0/dalo-0.15.0-aarch64-apple-darwin.tar.gz"
-      sha256 "de65daf58f705e1099fd80f768b5a732b32d95181637cafcc965e5d485498de5"
+      url "https://github.com/sebastian-software/dalo/releases/download/dalo-v0.15.1/dalo-0.15.1-aarch64-apple-darwin.tar.gz"
+      sha256 "4f48938350a1166a9a536416691d6f1154f225c9fa483d4a446d2f36a52236c8"
     else
-      url "https://github.com/sebastian-software/dalo/releases/download/dalo-v0.15.0/dalo-0.15.0-x86_64-apple-darwin.tar.gz"
-      sha256 "e166e8d5d78d71e2b9daaf3523753331863dd4629b8d8f21089ae699a02e9118"
+      url "https://github.com/sebastian-software/dalo/releases/download/dalo-v0.15.1/dalo-0.15.1-x86_64-apple-darwin.tar.gz"
+      sha256 "40b89db8ff1714dcabe914e177ae078a47f3b7667ca83b5a9e4b2d683cb079ab"
     end
   end
 
