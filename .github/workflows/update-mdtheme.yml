@@ -1,0 +1,62 @@
+name: Update mdtheme formula
+
+on:
+  schedule:
+    - cron: "17 */6 * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: update-mdtheme-formula
+  cancel-in-progress: false
+
+jobs:
+  update:
+    runs-on: macos-14
+    timeout-minutes: 15
+    env:
+      GH_TOKEN: ${{ github.token }}
+    steps:
+      - uses: actions/checkout@v7
+      - name: Download the latest native formula
+        id: download
+        shell: bash
+        run: |
+          tag=$(gh release view --repo sebastian-software/mdtheme --json tagName --jq .tagName)
+          if [[ ! "$tag" =~ ^mdtheme-v[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
+            echo "No stable native release found."
+            exit 0
+          fi
+          # The release may exist while its binaries are still being built.
+          assets=$(gh release view "$tag" --repo sebastian-software/mdtheme --json assets --jq '.assets[].name')
+          if ! printf '%s\n' "$assets" | grep -Fx mdtheme.rb > /dev/null; then
+            echo "Release artifacts are not ready yet."
+            exit 0
+          fi
+          gh release download "$tag" --repo sebastian-software/mdtheme --pattern mdtheme.rb --dir "$RUNNER_TEMP"
+          cp "$RUNNER_TEMP/mdtheme.rb" Formula/mdtheme.rb
+          if git diff --quiet -- Formula/mdtheme.rb && git ls-files --error-unmatch Formula/mdtheme.rb > /dev/null 2>&1; then
+            echo "Formula is already current."
+            exit 0
+          fi
+          echo "changed=true" >> "$GITHUB_OUTPUT"
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add Formula/mdtheme.rb
+          git commit -m "Update mdtheme to ${tag#mdtheme-v}"
+      - name: Register tap
+        if: steps.download.outputs.changed == 'true'
+        run: brew tap --custom-remote sebastian-software/tap "file://$GITHUB_WORKSPACE"
+      - name: Validate and install mdtheme
+        if: steps.download.outputs.changed == 'true'
+        run: |
+          brew style Formula/mdtheme.rb
+          brew audit --strict --online sebastian-software/tap/mdtheme
+          brew install sebastian-software/tap/mdtheme
+          brew test sebastian-software/tap/mdtheme
+          mdtheme --version
+      - name: Push verified update
+        if: steps.download.outputs.changed == 'true'
+        run: git push
