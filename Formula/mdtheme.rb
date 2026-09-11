@@ -1,7 +1,6 @@
 class Mdtheme < Formula
   desc "Compose Markdown with reusable local and Git themes"
   homepage "https://github.com/sebastian-software/mdtheme"
-  version "0.3.1"
   license "MIT"
 
   depends_on "git"
