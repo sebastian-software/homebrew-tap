@@ -5,10 +5,10 @@ require "net/http"
 require "uri"
 
 TAG_PATTERN = /\A(?:dalo-)?v(\d+\.\d+\.\d+(?:-[0-9A-Za-z.-]+)?)\z/
-ARCHITECTURES = {
-  arm: "aarch64-apple-darwin",
-  intel: "x86_64-apple-darwin",
-}.freeze
+# Dalo dropped its Intel macOS build with 1.0, so only the Apple Silicon
+# archive is published. Fetching an Intel checksum here would abort every
+# release dispatch on a file that no longer exists.
+TARGET = "aarch64-apple-darwin"
 
 def fetch(uri, redirects_left = 5)
   response = Net::HTTP.get_response(uri)
@@ -39,30 +39,26 @@ abort "Invalid Dalo release tag: #{tag}" unless match
 version = match[1]
 release_base = "https://github.com/sebastian-software/dalo/releases/download/#{tag}"
 
-checksums = ARCHITECTURES.transform_values do |target|
-  archive = "dalo-#{version}-#{target}.tar.gz"
-  checksum_uri = URI("#{release_base}/#{archive}.sha256")
-  checksum_match = /\A([0-9a-f]{64})\s+#{Regexp.escape(archive)}\s*\z/.match(fetch(checksum_uri))
-  abort "Invalid checksum file for #{archive}" unless checksum_match
+archive = "dalo-#{version}-#{TARGET}.tar.gz"
+checksum_uri = URI("#{release_base}/#{archive}.sha256")
+checksum_match = /\A([0-9a-f]{64})\s+#{Regexp.escape(archive)}\s*\z/.match(fetch(checksum_uri))
+abort "Invalid checksum file for #{archive}" unless checksum_match
 
-  checksum_match[1]
-end
+checksum = checksum_match[1]
 
 formula = <<~RUBY
   class Dalo < Formula
     desc "Git-backed skill management for AI agents"
     homepage "https://dalo.sh"
+    url "#{release_base}/#{archive}"
+    sha256 "#{checksum}"
     license "MIT"
 
-    on_macos do
-      if Hardware::CPU.arm?
-        url "#{release_base}/dalo-#{version}-#{ARCHITECTURES[:arm]}.tar.gz"
-        sha256 "#{checksums[:arm]}"
-      else
-        url "#{release_base}/dalo-#{version}-#{ARCHITECTURES[:intel]}.tar.gz"
-        sha256 "#{checksums[:intel]}"
-      end
-    end
+    # Dalo dropped its Intel macOS build with 1.0. Declaring the requirement
+    # makes an Intel Mac fail with Homebrew's own architecture error instead of
+    # a 404 on an archive that no release produces.
+    depends_on arch: :arm64
+    depends_on :macos
 
     def install
       bin.install "dalo"
