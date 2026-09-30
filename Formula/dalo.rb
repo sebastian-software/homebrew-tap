@@ -1,8 +1,8 @@
 class Dalo < Formula
   desc "Git-backed skill management for AI agents"
   homepage "https://dalo.sh"
-  url "https://github.com/sebastian-software/dalo/releases/download/dalo-v1.2.1/dalo-1.2.1-aarch64-apple-darwin.tar.gz"
-  sha256 "dcf2b5c5b6cffcced4929f7da8d3ea7a34c7452dfb4c078263e04d0b24604dd0"
+  url "https://github.com/sebastian-software/dalo/releases/download/dalo-v1.3.0/dalo-1.3.0-aarch64-apple-darwin.tar.gz"
+  sha256 "51fd4fb9f2450ed99d7c0dbe06efbe4b7a79c2692fd5d39dc0f283305d494f52"
   license "MIT"
 
   # Dalo dropped its Intel macOS build with 1.0. Declaring the requirement
