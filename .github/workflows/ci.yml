@@ -17,6 +17,8 @@ jobs:
       - uses: actions/checkout@v7
       - name: Check formula trust boundaries
         run: bash .github/scripts/test_ci_formula_trust.sh
+      - name: Check mdtheme candidate identity
+        run: bash .github/scripts/test_mdtheme_candidate.sh
       - name: Register tap
         run: brew tap --custom-remote sebastian-software/tap "file://$GITHUB_WORKSPACE"
       - name: Validate formula
