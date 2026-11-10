@@ -15,11 +15,14 @@ jobs:
     timeout-minutes: 10
     steps:
       - uses: actions/checkout@v7
+      - name: Check formula trust boundaries
+        run: bash .github/scripts/test_ci_formula_trust.sh
       - name: Register tap
         run: brew tap --custom-remote sebastian-software/tap "file://$GITHUB_WORKSPACE"
       - name: Validate formula
         run: |
           brew style Formula/*.rb
+          bash .github/scripts/trust_ci_formula.sh dalo
           brew audit --strict --online sebastian-software/tap/dalo
       - name: Install and test Dalo
         run: |
@@ -29,6 +32,7 @@ jobs:
       - name: Install and test mdtheme
         if: hashFiles('Formula/mdtheme.rb') != ''
         run: |
+          bash .github/scripts/trust_ci_formula.sh mdtheme
           brew audit --strict --online sebastian-software/tap/mdtheme
           brew install sebastian-software/tap/mdtheme
           brew test sebastian-software/tap/mdtheme
