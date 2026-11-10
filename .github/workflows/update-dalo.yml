@@ -44,6 +44,7 @@ jobs:
       - name: Validate formula
         run: |
           brew style Formula/dalo.rb
+          bash .github/scripts/trust_ci_formula.sh dalo
           brew audit --strict --online sebastian-software/tap/dalo
       - name: Install and test Dalo
         run: |
