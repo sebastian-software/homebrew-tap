@@ -7,21 +7,21 @@ class Mdtheme < Formula
 
   on_macos do
     if Hardware::CPU.arm?
-      url "https://github.com/sebastian-software/mdtheme/releases/download/mdtheme-v0.4.0/mdtheme-aarch64-apple-darwin.tar.gz"
-      sha256 "201243574c27f7c8544c32aa127df9a01e70786ca1eb70c65bdc808c872a2602"
+      url "https://github.com/sebastian-software/mdtheme/releases/download/mdtheme-v0.4.1/mdtheme-aarch64-apple-darwin.tar.gz"
+      sha256 "b52e9708ba786d334bf7ee7899831a77cd1a4e183c01248ad1d4a3cb7656aef2"
     else
-      url "https://github.com/sebastian-software/mdtheme/releases/download/mdtheme-v0.4.0/mdtheme-x86_64-apple-darwin.tar.gz"
-      sha256 "15736659034616f11126ecf90502083af8763b1dc4216db933086f8bd6f0ef16"
+      url "https://github.com/sebastian-software/mdtheme/releases/download/mdtheme-v0.4.1/mdtheme-x86_64-apple-darwin.tar.gz"
+      sha256 "ebd28f155b52983631ed53beb9515742d11b3acf66274bcd9470359a13685670"
     end
   end
 
   on_linux do
     if Hardware::CPU.arm?
-      url "https://github.com/sebastian-software/mdtheme/releases/download/mdtheme-v0.4.0/mdtheme-aarch64-unknown-linux-gnu.tar.gz"
-      sha256 "1b3757e23cc189dbd59bbad7bbfc25f772ac117cd559f29b27e77af538ca9d5c"
+      url "https://github.com/sebastian-software/mdtheme/releases/download/mdtheme-v0.4.1/mdtheme-aarch64-unknown-linux-gnu.tar.gz"
+      sha256 "f777c142655701e2bfb6251a0b06410ae20a4f64d8b3ae8161cf773949c87f85"
     else
-      url "https://github.com/sebastian-software/mdtheme/releases/download/mdtheme-v0.4.0/mdtheme-x86_64-unknown-linux-gnu.tar.gz"
-      sha256 "b6c6ef4376833c415794850e4a0e9d6d1fafa0d5877d0a14832eee3ea6d086fc"
+      url "https://github.com/sebastian-software/mdtheme/releases/download/mdtheme-v0.4.1/mdtheme-x86_64-unknown-linux-gnu.tar.gz"
+      sha256 "2ae310bff86f32721c72c54f94614dd2b7e6793e0aaef4d6b501011cfe290bcb"
     end
   end
 
